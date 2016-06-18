@@ -25,8 +25,8 @@ RUN mkdir -p /tmp/build/nginx-rtmp-module && \
     cd /tmp/build/nginx-rtmp-module && \
     wget -O nginx-rtmp-module-${NGINX_RTMP_MODULE_VERSION}.tar.gz https://github.com/sergey-dryabzhinsky/nginx-rtmp-module/archive/v${NGINX_RTMP_MODULE_VERSION}.tar.gz && \
     tar -zxf nginx-rtmp-module-${NGINX_RTMP_MODULE_VERSION}.tar.gz && \
-	cd nginx-rtmp-module-${NGINX_RTMP_MODULE_VERSION} && \
-	wget -O - https://raw.githubusercontent.com/gentoo/gentoo/6241ba18ca4a5e043a97ad11cf450c8d27b3079f/www-servers/nginx/files/rtmp-nginx-1.11.0.patch | patch
+    cd nginx-rtmp-module-${NGINX_RTMP_MODULE_VERSION} && \
+    wget -O - https://raw.githubusercontent.com/gentoo/gentoo/6241ba18ca4a5e043a97ad11cf450c8d27b3079f/www-servers/nginx/files/rtmp-nginx-1.11.0.patch | patch
 
 # Build and install nginx
 RUN cd /tmp/build/nginx/${NGINX_VERSION} && \
@@ -51,9 +51,9 @@ RUN cd /tmp/build/nginx/${NGINX_VERSION} && \
         --without-http_map_module \
         --without-http_split_clients_module \
         --without-http_referer_module \
-		--without-http_rewrite_module \
+        --without-http_rewrite_module \
         --without-http_proxy_module \
-		--without-http_fastcgi_module \
+        --without-http_fastcgi_module \
         --without-http_uwsgi_module \
         --without-http_scgi_module \
         --without-http_memcached_module \
@@ -66,19 +66,19 @@ RUN cd /tmp/build/nginx/${NGINX_VERSION} && \
         --without-http_upstream_least_conn_module \
         --without-http_upstream_keepalive_module \
         --without-http_upstream_zone_module \
-		--without-http-cache \
-		--without-mail_pop3_module \
-		--without-mail_imap_module \
-		--without-mail_smtp_module \
-		--without-stream_limit_conn_module \
-		--without-stream_access_module \
-		--without-stream_upstream_hash_module \
-		--without-stream_upstream_least_conn_module \
-		--without-stream_upstream_zone_module \
-		--without-pcre \
+        --without-http-cache \
+        --without-mail_pop3_module \
+        --without-mail_imap_module \
+        --without-mail_smtp_module \
+        --without-stream_limit_conn_module \
+        --without-stream_access_module \
+        --without-stream_upstream_hash_module \
+        --without-stream_upstream_least_conn_module \
+        --without-stream_upstream_zone_module \
+        --without-pcre \
         --with-threads \
         --with-ipv6 \
-		--add-module=/tmp/build/nginx-rtmp-module/nginx-rtmp-module-${NGINX_RTMP_MODULE_VERSION} && \
+        --add-module=/tmp/build/nginx-rtmp-module/nginx-rtmp-module-${NGINX_RTMP_MODULE_VERSION} && \
     make -j $(getconf _NPROCESSORS_ONLN) && \
     make install && \
     rm -rf /tmp/build
