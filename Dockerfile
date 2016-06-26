@@ -80,8 +80,8 @@ RUN cd /tmp/build/nginx/${NGINX_VERSION} && \
         --add-module=/tmp/build/nginx-rtmp-module/nginx-rtmp-module-${NGINX_RTMP_MODULE_VERSION} && \
     make -j $(getconf _NPROCESSORS_ONLN) && \
     make install && \
-	mkdir /var/lock/nginx && \
-	mkdir /tmp/nginx-client-body && \
+    mkdir /var/lock/nginx && \
+    mkdir /tmp/nginx-client-body && \
     rm -rf /tmp/build
 
 # Remove build prerequisites
