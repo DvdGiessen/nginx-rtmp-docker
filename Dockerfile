@@ -6,7 +6,7 @@ ENV NGINX_VERSION nginx-1.11.1
 ENV NGINX_RTMP_MODULE_VERSION 1.1.7.10
 
 # Set up user
-ENV USER nginx-rtmp-docker
+ENV USER nginx
 RUN adduser -s /sbin/nologin -D -H ${USER}
 
 # Install prerequisites and update certificates
@@ -35,7 +35,7 @@ RUN cd /tmp/build/nginx/${NGINX_VERSION} && \
         --conf-path=/etc/nginx/nginx.conf \
         --error-log-path=/var/log/nginx/error.log \
         --pid-path=/var/run/nginx/nginx.pid \
-        --lock-path=/var/lock/nginx.lock \
+        --lock-path=/var/lock/nginx/nginx.lock \
         --user=${USER} --group=${USER} \
         --http-log-path=/var/log/nginx/access.log \
         --http-client-body-temp-path=/tmp/nginx-client-body \
@@ -80,11 +80,9 @@ RUN cd /tmp/build/nginx/${NGINX_VERSION} && \
         --add-module=/tmp/build/nginx-rtmp-module/nginx-rtmp-module-${NGINX_RTMP_MODULE_VERSION} && \
     make -j $(getconf _NPROCESSORS_ONLN) && \
     make install && \
+	mkdir /var/lock/nginx && \
+	mkdir /tmp/nginx-client-body && \
     rm -rf /tmp/build
-
-# Set permissions for PID directory
-RUN chown ${USER}:${USER} /var/run/nginx && \
-    chmod -R 770 /var/run/nginx
 
 # Remove build prerequisites
 RUN apk del build-base openssl-dev && \
@@ -96,7 +94,11 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
 
 # Set up config file
 COPY nginx.conf /etc/nginx/nginx.conf
-RUN chmod 444 /etc/nginx/nginx.conf
+
+# Set permissions
+RUN chmod 444 /etc/nginx/nginx.conf && \
+    chown ${USER}:${USER} /var/log/nginx /var/run/nginx /var/lock/nginx /tmp/nginx-client-body && \
+    chmod -R 770 /var/log/nginx /var/run/nginx /var/lock/nginx /tmp/nginx-client-body
 
 # Run the application
 USER ${USER}
