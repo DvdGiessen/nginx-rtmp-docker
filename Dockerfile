@@ -6,11 +6,11 @@ ENV NGINX_VERSION nginx-1.11.1
 ENV NGINX_RTMP_MODULE_VERSION 1.1.7.10
 
 # Set up user
-ENV USER www-data
+ENV USER nginx-rtmp-docker
 RUN adduser -s /sbin/nologin -D -H ${USER}
 
 # Install prerequisites and update certificates
-RUN apk --update add ca-certificates build-base openssl openssl-dev && \
+RUN apk --update --no-cache add ca-certificates build-base openssl openssl-dev && \
     update-ca-certificates && \
     rm -rf /var/cache/apk/*
 
@@ -34,12 +34,11 @@ RUN cd /tmp/build/nginx/${NGINX_VERSION} && \
         --sbin-path=/usr/local/sbin/nginx \
         --conf-path=/etc/nginx/nginx.conf \
         --error-log-path=/var/log/nginx/error.log \
-        --pid-path=/var/run/nginx.pid \
+        --pid-path=/var/run/nginx/nginx.pid \
         --lock-path=/var/lock/nginx.lock \
         --user=${USER} --group=${USER} \
         --http-log-path=/var/log/nginx/access.log \
         --http-client-body-temp-path=/tmp/nginx-client-body \
-        --http-fastcgi-temp-path=/tmp/nginx-fastcgi \
         --without-http_charset_module \
         --without-http_gzip_module \
         --without-http_ssi_module \
@@ -83,6 +82,10 @@ RUN cd /tmp/build/nginx/${NGINX_VERSION} && \
     make install && \
     rm -rf /tmp/build
 
+# Set permissions for PID directory
+RUN chown ${USER}:${USER} /var/run/nginx && \
+    chmod -R 770 /var/run/nginx
+
 # Remove build prerequisites
 RUN apk del build-base openssl-dev && \
     rm -rf /var/cache/apk/*
@@ -96,5 +99,6 @@ COPY nginx.conf /etc/nginx/nginx.conf
 RUN chmod 444 /etc/nginx/nginx.conf
 
 # Run the application
+USER ${USER}
 EXPOSE 1935
 CMD ["nginx", "-g", "daemon off;"]
