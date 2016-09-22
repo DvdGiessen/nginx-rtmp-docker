@@ -2,7 +2,7 @@
 
 # Software versions
 FROM alpine:3.4
-ENV NGINX_VERSION nginx-1.11.1
+ENV NGINX_VERSION nginx-1.11.4
 ENV NGINX_RTMP_MODULE_VERSION 1.1.7.10
 
 # Set up user
