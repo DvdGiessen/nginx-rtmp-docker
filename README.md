@@ -2,21 +2,27 @@
 **Dockerfile for building lightweight nginx + rtmp module for replicating streams**
 
 ## Usage
-`docker run -dp 1935:1935 dvdgiessen/nginx-rtmp-docker`
-
-If you want to use a custom nginx.conf file, create a volume mapping:
-
-`docker run -dp 1935:1935 -v /path/to/my/custom/nginx.conf:/etc/nginx/nginx.conf dvdgiessen/nginx-rtmp-docker`
-
-## Troubleshooting
-If you encounter an error like this:
-```
-[alert] could not open error log file: open() "/var/log/nginx/access.log" failed (13: Permission denied)
+### How to run the server
+```sh
+docker run -dp 1935:1935 dvdgiessen/nginx-rtmp-docker
 ```
 
-Then you are running an outdated version of Docker. See [the Docker documentation](https://docs.docker.com/engine/installation/) on how to get the latest version.
+### How to stream to the server
+Set OBS up with the following settings:
+ * Go to Settings > Stream.
+ * Fill out the following settings:
+   * Stream Type: Custom Streaming Server.
+   * URL: `rtmp://localhost:1935/live`. Replace `localhost` with the IP
+     of where the server is running.
+   * Stream key: `my-stream-key`. This can be anything you want.
+
+### How to view the stream
+Using VLC:
+ * Go to Media > Open Network Stream.
+ * Enter the following URL: `rtmp://localhost:1935/live/my-stream-key`.
+   Replace `localhost` with the IP of where the server is running, and
+   `my-stream-key` with the stream key you used when setting up the stream.
+ * Click Play.
 
 ## More info
 Docker Hub: https://hub.docker.com/r/dvdgiessen/nginx-rtmp-docker/
-
-Based on setup described on the OBS forums [here](https://obsproject.com/forum/resources/how-to-set-up-your-own-private-rtmp-server-using-nginx.50/).
